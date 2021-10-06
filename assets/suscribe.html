@@ -1,0 +1,50 @@
+<html>
+
+<head>
+    
+</head>
+<body>
+
+<p> Formulaire d'inscription utilisateur avec genre (masculin, féminin), nom, prénom, ville, email, password </p>
+
+<form action="/subscribe" method="POST" 
+enctype="multipart/form-data">
+    <p>Genre</p>
+    Masculin <input type="radio" name="genre" value="masculin" />
+    Féminin <input type="radio" name="genre" value="feminin" />
+
+
+    <p>Photo</p>
+    <input type="file" name="photo" />
+    
+    <p>Nom</p>
+    <input type="text" name="nom" />
+
+    <p>Prénom</p>
+    <input type="text" name="prenom" />
+
+    <p>Ville</p>
+    <input type="text" name="ville" />
+
+    <p>E-Mail</p>
+    <input type="text" name="email" />
+  
+   <p>Age</p>
+    <input type="text" name="age" />
+    
+
+    <p>Password</p>
+    <input type="password" name="password" />
+    
+    <p>Bio</p>
+    <textarea name="bio"></textarea>
+
+    <button type="submit">Enregistrer cet utilisateur</button>
+</form>
+
+
+
+</body>
+
+
+</html>
