@@ -7,12 +7,52 @@ const axios = require('axios')
 const { json } = require( 'express/lib/response' )
 const fs = require( 'fs' )
 const Mustache = require('Mustache')
+const {createConnection, createConnections, Connection}  =  require("typeorm");
+
+
+const main = async () =>
+{
+   try
+  {
+  const connection = await createConnection({
+    type: "mysql",
+    host: "localhost",
+    port: 8889,
+    username: "root",
+    password: "root",
+    database: "appnode"
+  } );
+ 
+     connection.query('SELECT * FROM user', function (error, results, fields) {
+    if (error) throw error;
+    console.log('The solution is: ', results);
+  });
+
+  } catch ( e )
+  {
+    console.log(e)
+  }
+}
+
+main()
 
 const bodyParser = require('body-parser')
 const app = express()
+const session = require('express-session')
+
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'Webtech2022',
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    secure: false,
+    expires: false,
+    maxAge: 30 * 24 * 60 * 60 * 1000
+  }
+}))
 
 const fileUpload = require('express-fileupload')
-
 app.use(fileUpload({
   limits: { fileSize: 50 * 1024 * 1024 },
   useTempFiles : true,
@@ -44,6 +84,33 @@ app.get( '/moustache', ( req, res ) =>
   } )
 } )
 
+
+app.get( '/login', ( req, res ) =>
+{
+  console.log(req.session)
+  return res.render('login',  {
+      name: req.session.name
+    })
+} )
+
+
+app.post( '/login', ( req, res ) =>
+{
+  const { email, password } = req.body
+  if ( email === "julien@taiwa.fr" )
+  {
+
+    req.session.name = "Julien Boyer"
+    return res.render( 'login', {
+      name: req.session.name
+    })
+  } else
+  {
+    return res.status('403').send("Erreur d'identifiant")
+  }
+  
+} )
+
 app.get( '/photos', ( req, res ) =>
 {
   
@@ -69,7 +136,7 @@ app.post( "/subscribe",  ( req, res, next ) =>
 {
   
   console.log( req.files.photo );
-  req.files.photo.mv( './avatar/avatar.jpg', ( err ) =>
+  req.files.photo.mv( `./avatar/${req.files.photo.name}`, ( err ) =>
   {
      if (err)
       return res.status(500).send(err);
